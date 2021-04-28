@@ -29,8 +29,8 @@ Category.getAll = result => {
     })
 }
 
-Category.findById = (customerId, result) => {
-    sql.query(`SELECT * FROM categories WHERE id = ${customerId}`, (err, res) => {
+Category.findById = (categoryId, result) => {
+    sql.query(`SELECT * FROM categories WHERE id = ?`, categoryId, (err, res) => {
       if (err) {
         console.log("error: ", err);
         result(err, null);
@@ -46,6 +46,48 @@ Category.findById = (customerId, result) => {
       // not found category with the id
       result({ kind: "not_found" }, null);
     });
-  };
+};
+
+Category.remove = (id, result) => {
+    sql.query("DELETE FROM categories WHERE id = ?", id, (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(null, err);
+        return;
+      }
+  
+      if (res.affectedRows == 0) {
+        // not found Customer with the id
+        result({ kind: "not_found" }, null);
+        return;
+      }
+  
+      console.log("deleted category with id: ", id);
+      result(null, res);
+    });
+};
+
+Category.updateById = (id, category, result) => {
+    sql.query(
+      "UPDATE categories SET name = ? WHERE id = ?",
+      [category.name, id],
+      (err, res) => {
+        if (err) {
+          console.log("error: ", err);
+          result(null, err);
+          return;
+        }
+  
+        if (res.affectedRows == 0) {
+          // not found Customer with the id
+          result({ kind: "not_found" }, null);
+          return;
+        }
+  
+        console.log("updated category: ", { id: id, ...category });
+        result(null, { id: id, ...category });
+      }
+    );
+};
 
 module.exports = Category;

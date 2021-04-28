@@ -1,4 +1,5 @@
 const express = require('express')
+const { remove } = require('../db/category.model.js')
 const CategoryModel = require('../db/category.model.js')
 
 module.exports = {
@@ -41,7 +42,6 @@ module.exports = {
         })
     },
 
-    
     async find(req, res){
         CategoryModel.findById(req.params.categoryId, (err, data) => {
             if (err) {
@@ -58,6 +58,50 @@ module.exports = {
             }
         );
     },
+
+    async remove(req, res){
+        CategoryModel.remove(req.params.categoryId, (err, data) => {
+            if (err) {
+              if (err.kind === "not_found") {
+                res.status(404).send({
+                  message: `Not found Category with id ${req.params.categoryId}.`
+                });
+              } else {
+                res.status(500).send({
+                  message: "Could not delete Category with id " + req.params.categoryId
+                });
+              }
+            } else res.send({ message: `Category was deleted successfully!` });
+          }
+        );
+    },
+
+    async update(req, res){
+        // Validate Request
+        if (!req.body) {
+          res.status(400).send({
+            message: "Content can not be empty!"
+          });
+        }
+      
+        CategoryModel.updateById(
+          req.params.categoryId,
+          new CategoryModel(req.body),
+          (err, data) => {
+            if (err) {
+              if (err.kind === "not_found") {
+                res.status(404).send({
+                  message: `Not found Category with id ${req.params.categoryId}.`
+                });
+              } else {
+                res.status(500).send({
+                  message: "Error updating Category with id " + req.params.categoryId
+                });
+              }
+            } else res.send(data);
+          }
+        );
+      }
 
     
 }

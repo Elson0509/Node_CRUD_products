@@ -8,8 +8,12 @@ router.get('/', (req, res) => {
 
 router.get('/categories', categoryController.findAll)
 
-router.get("/categories/:categoryId", categoryController.find);
+router.get("/categories/:categoryId", categoryController.find)
+
+router.delete("/categories/:categoryId", categoryController.remove)
 
 router.post('/categories', categoryController.create)
+
+router.put("/categories/:categoryId", categoryController.update)
 
 module.exports = router
