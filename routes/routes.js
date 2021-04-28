@@ -8,6 +8,8 @@ router.get('/', (req, res) => {
 
 router.get('/categories', categoryController.findAll)
 
+router.get("/categories/:categoryId", categoryController.find);
+
 router.post('/categories', categoryController.create)
 
 module.exports = router

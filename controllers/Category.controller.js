@@ -40,5 +40,25 @@ module.exports = {
             }
         })
     },
+
+    
+    async find(req, res){
+        CategoryModel.findById(req.params.categoryId, (err, data) => {
+            if (err) {
+                if (err.kind === "not_found") {
+                  res.status(404).send({
+                    message: `Not found category with id ${req.params.customerId}.`
+                  });
+                } else {
+                  res.status(500).send({
+                    message: "Error retrieving category with id " + req.params.customerId
+                  });
+                }
+              } else res.send(data);
+            }
+        );
+    },
+
+    
 }
 
