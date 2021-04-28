@@ -24,4 +24,4 @@ INSERT INTO Products (category_id, name, description, img, price) VALUES
     (3,'Home Office Set','Young and fresh, the Chrono Collection from Nexera has everything to please.','05.jgp',39999),
     (3,'Bookcase','Add the sleek Mainstays 3-Shelf Bookcase to almost any room for a functional and stylish look.','06.jgp',9999),
     (4,'Portable BLUETOOTH','Bring your music to life with EXTRA BASS','07.jgp',11579),
-    (4,'Samsung Galaxy','We get you. The standout in the crowd, the one with relentless passion. ','08.jgp',79979),
+    (4,'Samsung Galaxy','We get you. The standout in the crowd, the one with relentless passion. ','08.jgp',79979);
