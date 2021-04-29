@@ -3,14 +3,14 @@ const productController = require('../controllers/product.controller')
 const router = express.Router()
 
 
-router.get('/products', productController.findAll)
+router.get('/', productController.findAll)
 
-router.get("/products/:productId", productController.find)
+router.get("/:productId", productController.find)
 
-router.delete("/products/:productId", productController.remove)
+router.delete("/:productId", productController.remove)
 
-router.post('/products', productController.create)
+router.post('/', productController.create)
 
-router.put("/products/:productId", productController.update)
+router.put("/:productId", productController.update)
 
 module.exports = router 

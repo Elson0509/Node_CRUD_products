@@ -1,4 +1,3 @@
-const express = require('express')
 const ProductModel = require('../db/product.model.js')
 
 module.exports = {

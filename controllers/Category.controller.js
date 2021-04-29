@@ -1,4 +1,3 @@
-const express = require('express')
 const CategoryModel = require('../db/category.model.js')
 
 module.exports = {

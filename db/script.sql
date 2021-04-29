@@ -15,6 +15,13 @@ CREATE TABLE products (
     FOREIGN KEY (category_id) REFERENCES categories(id)
 );
 
+CREATE TABLE users(
+    id int NOT NULL AUTO_INCREMENT,
+    username varchar(50) NOT NULL UNIQUE,
+    password varchar(50) NOT NULL,
+    PRIMARY KEY (id)
+);
+
 INSERT INTO categories (name) VALUES ('Baby'),('Home'),('Furniture'),('Electronics');
 INSERT INTO Products (category_id, name, description, img, price) VALUES
     (1,'Car Seat','Specifically for infants - convenience for you and comfort for baby.','01.jpg', 12379),
