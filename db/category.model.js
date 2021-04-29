@@ -84,8 +84,8 @@ Category.updateById = (id, category, result) => {
           return;
         }
   
-        console.log("updated category: ", { id: id, ...category });
-        result(null, { id: id, ...category });
+        console.log("updated category: ", { ...category, id: id });
+        result(null, { ...category, id: id });
       }
     );
 };

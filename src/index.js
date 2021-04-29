@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors')
-const routes = require('../routes/routes')
+const categoryRoutes = require('../routes/categories.routes')
+const productRoutes = require('../routes/product.routes')
 const bodyParser = require('body-parser')
 require('dotenv').config()
 
@@ -18,7 +19,9 @@ app.use(cors({
     origin: 'http://localhost'
 }))
 
-app.use(routes)
+//routes
+app.use(categoryRoutes)
+app.use(productRoutes)
 
 app.listen(process.env.PORT || 3333, ()=> {
     console.log('listening')

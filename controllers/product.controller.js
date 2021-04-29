@@ -1,5 +1,5 @@
 const express = require('express')
-const CategoryModel = require('../db/category.model.js')
+const ProductModel = require('../db/product.model.js')
 
 module.exports = {
     async create(req, res){
@@ -12,15 +12,20 @@ module.exports = {
 
         console.log(req.body)
         //create a category
-        const newCategory = new CategoryModel({
-            name: req.body.name
+        const newProduct = new ProductModel({
+            name: req.body.name,
+            category_id: req.body.category_id,
+            description: req.body.description,
+            img: req.body.img,
+            name: req.body.name,
+            price: req.body.price,
         })
 
-        //Save costumer in database
-        CategoryModel.create(newCategory, (err, data) => {
+        //Save product in database
+        ProductModel.create(newProduct, (err, data) => {
             if(err)
                 res.status(500).send({
-                    message: err.message || "Some error occurred while adding category."
+                    message: err.message || "Some error occurred while adding product."
                 })
             else{
                 res.send({data})
@@ -30,10 +35,10 @@ module.exports = {
     },
 
     async findAll(req, res){
-        CategoryModel.getAll((err, data) => {
+      ProductModel.getAll((err, data) => {
             if(err)
                 res.status(500).send({
-                    message: err.message || "Some error occurred while retrieving categories."
+                    message: err.message || "Some error occurred while retrieving products."
                 })
             else{
                 res.render('index', {data: data})
@@ -42,15 +47,15 @@ module.exports = {
     },
 
     async find(req, res){
-        CategoryModel.findById(req.params.categoryId, (err, data) => {
+      ProductModel.findById(req.params.productId, (err, data) => {
             if (err) {
                 if (err.kind === "not_found") {
                   res.status(404).send({
-                    message: `Not found category with id ${req.params.customerId}.`
+                    message: `Not found category with id ${req.params.productId}.`
                   });
                 } else {
                   res.status(500).send({
-                    message: "Error retrieving category with id " + req.params.customerId
+                    message: "Error retrieving category with id " + req.params.productId
                   });
                 }
               } else res.send(data);
@@ -59,18 +64,18 @@ module.exports = {
     },
 
     async remove(req, res){
-        CategoryModel.remove(req.params.categoryId, (err, data) => {
+        ProductModel.remove(req.params.productId, (err, data) => {
             if (err) {
               if (err.kind === "not_found") {
                 res.status(404).send({
-                  message: `Not found Category with id ${req.params.categoryId}.`
+                  message: `Not found Product with id ${req.params.productId}.`
                 });
               } else {
                 res.status(500).send({
-                  message: "Could not delete Category with id " + req.params.categoryId
+                  message: "Could not delete Product with id " + req.params.productId
                 });
               }
-            } else res.send({ message: `Category was deleted successfully!` });
+            } else res.send({ message: `Product was deleted successfully!` });
           }
         );
     },
@@ -83,25 +88,23 @@ module.exports = {
           });
         }
       
-        CategoryModel.updateById(
-          req.params.categoryId,
-          new CategoryModel(req.body),
+        ProductModel.updateById(
+          req.params.productId,
+          new ProductModel(req.body),
           (err, data) => {
             if (err) {
               if (err.kind === "not_found") {
                 res.status(404).send({
-                  message: `Not found Category with id ${req.params.categoryId}.`
+                  message: `Not found Product with id ${req.params.productId}.`
                 });
               } else {
                 res.status(500).send({
-                  message: "Error updating Category with id " + req.params.categoryId
+                  message: "Error updating Product with id " + req.params.productId
                 });
               }
             } else res.send(data);
           }
         );
       }
-
-    
 }
 
