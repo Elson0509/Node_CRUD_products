@@ -1,6 +1,8 @@
 const UserModel = require('../db/user.model.js')
 const {validationResult} = require('express-validator')
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+require('dotenv').config()
 
 module.exports = {
     async signup(req, res){
@@ -43,7 +45,17 @@ module.exports = {
                 })
             }
             else{
-                res.send({data})
+                let token
+                try{
+                    token = jwt.sign({userId: data.id, username: data.username}, process.env.JWT_TOKEN_PRIVATE_KEY)
+                }
+                catch(error){
+                    res.status(500).send({
+                        message: err.message || "Some error occurred while adding user."
+                    })
+                    return
+                }
+                res.send({userId: data.id, username: data.username, token})
             }
         })
     },
@@ -75,7 +87,6 @@ module.exports = {
                 }
               } else {
                   //user found
-                  console.log(data)
                   //validating hash
                   let isValidPassword = false
                   try{
@@ -86,8 +97,20 @@ module.exports = {
                       });
                       return
                   }
-                  if(isValidPassword)
-                    res.send('Logged in!')
+                  if(isValidPassword){
+                    let token
+                    try{
+                        token = jwt.sign({userId: data.id, username: data.username}, process.env.JWT_TOKEN_PRIVATE_KEY)
+                    }
+                    catch(error){
+                        res.status(500).send({
+                            message: err.message || "Some error occurred while logging user."
+                        })
+                        return
+                    }
+                    res.send({userId: data.id, username: data.username, token})
+                    //res.send('Logged in!')
+                  }
                   else{
                     res.status(500).send({
                         message: `Could not login. Please check your credentials.`
