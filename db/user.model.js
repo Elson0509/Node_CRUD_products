@@ -23,7 +23,7 @@ User.create = (newUser, result) => {
 }
 
 User.login = (user, result) => {
-    sql.query(`SELECT * from users WHERE users.username = ? AND users.password = ?`, [user.username, user.password], (err, res) => {
+    sql.query(`SELECT * from users WHERE users.username = ? `, [user.username], (err, res) => {
       if (err) {
         console.log("error: ", err);
         result(err, null);

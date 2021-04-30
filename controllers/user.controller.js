@@ -1,5 +1,6 @@
 const UserModel = require('../db/user.model.js')
 const {validationResult} = require('express-validator')
+const bcrypt = require('bcryptjs')
 
 module.exports = {
     async signup(req, res){
@@ -11,10 +12,21 @@ module.exports = {
             return
         }
 
+        //hashing password
+        let hashedPassword
+        try{
+        hashedPassword = await bcrypt.hash(req.body.password, 12)
+        } catch (err){
+            res.status(500).send({
+                message: err.message || "Could not creat user. Please try again."
+            })
+            return
+        }
+
         //create an user
         const newUser = new UserModel({
             username: req.body.username,
-            password: req.body.password
+            password: hashedPassword
         })
 
         //Save costumer in database
@@ -50,7 +62,7 @@ module.exports = {
             password: req.body.password
         })
 
-        UserModel.login(user, (err, data) => {
+        UserModel.login(user, async (err, data) => {
             if (err) {
                 if (err.kind === "not_found") {
                   res.status(404).send({
@@ -61,7 +73,27 @@ module.exports = {
                     message: "Error retrieving user "
                   });
                 }
-              } else res.send('Logged in!');
+              } else {
+                  //user found
+                  console.log(data)
+                  //validating hash
+                  let isValidPassword = false
+                  try{
+                    isValidPassword = await bcrypt.compare(req.body.password, data.password)
+                  } catch(error){
+                    res.status(500).send({
+                        message: `Could not login. Please check your credentials.`
+                      });
+                      return
+                  }
+                  if(isValidPassword)
+                    res.send('Logged in!')
+                  else{
+                    res.status(500).send({
+                        message: `Could not login. Please check your credentials.`
+                      });
+                  }
+              }
             }
         );
     }
