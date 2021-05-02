@@ -29,13 +29,15 @@ module.exports = {
     },
 
     async findAll(req, res){
+      console.log('req-userdata findAll categories')
+      console.log(req.userData)
         CategoryModel.getAll((err, data) => {
             if(err)
                 res.status(500).send({
                     message: err.message || "Some error occurred while retrieving categories."
                 })
             else{
-                res.render('index', {data: data})
+                res.render('categoriesList', {data: data, userData: req.userData})
             }
         })
     },

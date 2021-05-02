@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>Categories</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Categories <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Products</a>
+          </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+          <% if (userData) { %>
+            <span class="mr-4 text-light">Welcome, <%= userData.username %></span>
+            <button type="button" class="btn btn-danger">Logout</button>
+          <% } else {%>
+
+            <span class="mr-4 text-light">Welcome</span>
+            <button type="button" class="btn btn-primary">Login</button>
+          <% } %>
+        </form>
+      </div>
+    </nav>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col">
+          <h1>List of categories</h1>
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+          <% data.forEach((el) => { %>
+            <tr>
+              <th scope="row"><%= el.id %></th>
+              <td><%= el.name %></td>
+              <td><button type="button" class="btn btn-secondary mr-2" onclick="editcategory(<%= el.id %>)">Edit</button><button type="button" class="btn btn-danger" onclick="deletecategory(<%= el.id %>)">Delete</button></td>
+            </tr>
+          <% })%> 
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="/js/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script>
+      const editcategory = id => {
+        console.log('editing ' + id)
+      }
+      const deletecategory = id => {
+        console.log('deleting ' + id)
+      }
+    </script>
+  </body>
+</html>
