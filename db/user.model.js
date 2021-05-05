@@ -1,4 +1,5 @@
 const sql = require('./db.js')
+require('dotenv').config()
 
 const User = function(user) {
     this.id = user.id

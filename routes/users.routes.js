@@ -9,4 +9,6 @@ router.post('/signup', loginValidation, userController.signup)
 
 router.post('/login', loginValidation, userController.login)
 
+router.get('/users/:token', userController.findByToken)
+
 module.exports = router

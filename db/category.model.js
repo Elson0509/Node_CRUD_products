@@ -10,11 +10,11 @@ Category.create = (newCategory, result) => {
         //console.log(newCategory)
         if(err){
             console.log("error: ", err)
-            result(null, err)
+            result(err, null);
             return
         }
-        console.log('category created: ', {id: res.insertId, ...newCategory})
-        result(null, {id: res.insertId, ...newCategory});
+        console.log('category created: ', {...newCategory, id: res.insertId })
+        result(null, {...newCategory, id: res.insertId });
     })
 }
 
@@ -22,7 +22,7 @@ Category.getAll = result => {
     sql.query("SELECT * FROM categories", (err, res) => {
         if(err){
             console.log("error: ", err)
-            result(null, err)
+            result(err, null);
             return
         }
         result(null, res);
@@ -52,7 +52,7 @@ Category.remove = (id, result) => {
     sql.query("DELETE FROM categories WHERE id = ?", id, (err, res) => {
       if (err) {
         console.log("error: ", err);
-        result(null, err);
+        result(err, null);
         return;
       }
   
@@ -74,7 +74,7 @@ Category.updateById = (id, category, result) => {
       (err, res) => {
         if (err) {
           console.log("error: ", err);
-          result(null, err);
+          result(err, null);
           return;
         }
   

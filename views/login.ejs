@@ -28,7 +28,7 @@
             <div class="alert alert-danger" role="alert" id="danger-alert">
               
             </div>
-            <button type="submit" class="btn btn-primary" onclick="login(event)">Submit</button>
+            <button type="submit" class="btn btn-primary" onclick="login(event)">LOG IN</button>
           </form>
         </div>
         
@@ -53,9 +53,7 @@
         $.post( "http://localhost:3333/login", {username: $('#username').val(), password: $('#password').val()})
           .done(function( data ) {
             window.localStorage.setItem('token', data.token)
-            window.location.href = `/categories?token=${data.token}`
-
-            //console.log(`/login?token=${data.token}`)
+            window.location.href = `/categories`
         }).fail((err) => {
           $("#danger-alert").show()
           $("#danger-alert").text(err.responseJSON.message)

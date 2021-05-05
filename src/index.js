@@ -7,7 +7,6 @@ const pagesRoutes = require('../routes/pages.routes')
 const bodyParser = require('body-parser')
 require('dotenv').config()
 const checkAuth = require('../middleware/check-auth.js')
-const checkTokenQuery = require('../middleware/check-token-query')
 const app = express();
 
 // parse application/x-www-form-urlencoded
@@ -36,7 +35,7 @@ app.use(cors({
 }))
 
 //routes
-app.use(checkTokenQuery, pagesRoutes)
+app.use(pagesRoutes)
 app.use(userRoutes)
 app.use('/categories', checkAuth, categoryRoutes)
 app.use('/products', checkAuth, productRoutes)

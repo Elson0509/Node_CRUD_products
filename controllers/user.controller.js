@@ -121,5 +121,25 @@ module.exports = {
               }
             }
         );
-    }
+    },
+
+    async findByToken(req, res){
+        try{
+            const token = req.params.token
+            console.log({token})
+            if(!token){
+                res.status(401).send({
+                    message:  "Authentication failed."
+                })
+                return 
+            }
+            const decodedToken = jwt.verify(token, process.env.JWT_TOKEN_PRIVATE_KEY) //validating token
+            res.send({id: decodedToken.userId, username: decodedToken.username})
+        }catch(err){
+            res.status(401).send({
+                message:  "Authentication failed."
+            })
+            return 
+        }
+    },
 }

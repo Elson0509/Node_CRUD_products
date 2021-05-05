@@ -14,7 +14,7 @@ Product.create = (newProduct, result) => {
         //console.log(newProduct)
         if(err){
             console.log("error: ", err)
-            result(null, err)
+            result(err, null);
             return
         }
         console.log('product created: ', {...newProduct, id: res.insertId})
@@ -26,7 +26,7 @@ Product.getAll = result => {
     sql.query("SELECT * FROM products", (err, res) => {
         if(err){
             console.log("error: ", err)
-            result(null, err)
+            result(err, null);
             return
         }
         result(null, res);
@@ -56,7 +56,7 @@ Product.remove = (id, result) => {
     sql.query("DELETE FROM products WHERE id = ?", id, (err, res) => {
       if (err) {
         console.log("error: ", err);
-        result(null, err);
+        result(err, null);
         return;
       }
   
@@ -78,7 +78,7 @@ Product.updateById = (id, product, result) => {
       (err, res) => {
         if (err) {
           console.log("error: ", err);
-          result(null, err);
+          result(err, null);
           return;
         }
   

@@ -10,7 +10,7 @@
 
     <title>Categories</title>
   </head>
-  <body>
+  <body onload="loadHandler()">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
@@ -21,15 +21,9 @@
             <a class="nav-link" href="#">Products</a>
           </li>
         </ul>
-        <form class="form-inline my-2 my-lg-0">
-          <% if (userData) { %>
-            <span class="mr-4 text-light">Welcome, <%= userData.username %></span>
-            <button type="button" class="btn btn-danger">Logout</button>
-          <% } else {%>
-
+        <form class="form-inline my-2 my-lg-0" id="userStatus">
             <span class="mr-4 text-light">Welcome</span>
-            <button type="button" class="btn btn-primary">Login</button>
-          <% } %>
+            <button type="button" class="btn btn-primary" onclick="login()">Login</button>
         </form>
       </div>
     </nav>
@@ -45,16 +39,67 @@
                 <th scope="col">Action</th>
               </tr>
             </thead>
-            <tbody>
-          <% data.forEach((el) => { %>
-            <tr>
-              <th scope="row"><%= el.id %></th>
-              <td><%= el.name %></td>
-              <td><button type="button" class="btn btn-secondary mr-2" onclick="editcategory(<%= el.id %>)">Edit</button><button type="button" class="btn btn-danger" onclick="deletecategory(<%= el.id %>)">Delete</button></td>
-            </tr>
-          <% })%> 
+            <tbody id="tbody">
+              <% data.forEach((el, ind) => { %>
+                <tr nid="<%= el.id %>">
+                  <th scope="row"><%= (ind+1) %></th>
+                  <td><%= el.name %></td>
+                  <td><button type="button" class="btn btn-secondary mr-2" onclick="editModalcategory(<%= el.id %>)">Edit</button><button type="button" class="btn btn-warning" onclick="deletecategory(<%= `${el.id}, ${ind}` %>)">Delete</button></td>
+                </tr>
+              <% })%> 
             </tbody>
           </table>
+          <button type="button" class="btn btn-success" onclick="addModalcategory()">Add new Category</button>
+          <div class="alert alert-danger my-2" role="alert" id="danger-alert"></div>
+          <div class="alert alert-primary my-2" role="alert" id="primary-alert"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="modaladd" tabindex="-1" role="dialog" aria-labelledby="modaladdLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modaladdLabel">Adding Category</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" class="form-control" id="nameCat" aria-describedby="name" placeholder="Enter category name">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-success" onclick="addCategory()">Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="modaledit" tabindex="-1" role="dialog" aria-labelledby="modaladdLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modaladdLabel">Editing Category</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" class="form-control" id="nameCatEdit" aria-describedby="name" placeholder="Enter the new name">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-success" onclick="editCategory()">Edit</button>
+          </div>
         </div>
       </div>
     </div>
@@ -63,13 +108,169 @@
     <script src="/js/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="/js/auth.js"></script>
     <script>
+      let token = localStorage.getItem('token')
+      let user
+      let editSelectedCategoryId
+      const loadHandler = () => {
+        $('#danger-alert').hide()
+        $('#primary-alert').hide()
+        user = auth()
+      }
+
+      const sendDangerMessage = (message) => {
+        $('#danger-alert').show()
+        $('#danger-alert').text(message)
+        $('#primary-alert').hide()
+      }
+
+      const sendPrimaryMessage = (message) => {
+        $('#primary-alert').show()
+        $('#primary-alert').text(message)
+        $('#danger-alert').hide()
+      }
+
       const editcategory = id => {
-        console.log('editing ' + id)
+        if(!token){
+          sendDangerMessage('You are not allowed to make changes. You need to log in.')
+        }
+        else{
+          console.log('editing ' + id)
+        }
       }
-      const deletecategory = id => {
-        console.log('deleting ' + id)
+      const deletecategory = (id, indexTable) => {
+        if(!token){
+          sendDangerMessage('You are not allowed to make changes. You need to log in.')
+        }
+        else{
+          console.log('deleting ' + id)
+          $('#danger-alert').hide()
+          $('#primary-alert').hide()
+          $.ajax({
+            url: `/categories/${id}`,
+            type: 'delete',
+            headers: {
+              authorization: `Bearer ${localStorage.getItem('token')}` 
+            },
+            dataType: 'json',
+            success:( data ) => {
+              deleteCategoryInTableFromId(id)
+              sendPrimaryMessage('The category has been removed')
+              
+            },
+            error: ( err ) => {
+              sendDangerMessage(err.responseJSON.message)
+              
+            }
+          })
+        }
       }
+      const addModalcategory = () => {
+        if(!token){
+          sendDangerMessage('You are not allowed to make changes. You need to log in.')
+        }
+        else{
+          $('#modaladd').modal('toggle')
+        }
+      } 
+
+      const editModalcategory = (id) => {
+        editSelectedCategoryId = id
+        if(!token){
+          sendDangerMessage('You are not allowed to make changes. You need to log in.')
+        }
+        else{
+          $('#modaledit').modal('toggle')
+        }
+      } 
+
+      const addCategory = () => {
+        if($("#nameCat").val()){
+          $('#danger-alert').hide()
+          $('#primary-alert').hide()
+          $.ajax({
+            url: '/categories',
+            type: 'post',
+            data: {name: $("#nameCat").val()},
+            headers: {
+              authorization: `Bearer ${localStorage.getItem('token')}` 
+            },
+            dataType: 'json',
+            success:( data ) => {
+              appendAddedCategoryInTable(data)
+              sendPrimaryMessage('The category has been created')
+              $('#modaladd').modal('toggle')
+            },
+            error: ( err ) => {
+              sendDangerMessage(err.responseJSON.message)
+              $('#modaladd').modal('toggle')
+            }
+          })
+        }
+        else{
+          sendDangerMessage('The category cannot be empty!');
+          $('#modaladd').modal('toggle')
+        }
+      }
+
+      const editCategory = () => {
+        if($("#nameCatEdit").val()){
+          $('#danger-alert').hide()
+          $('#primary-alert').hide()
+          $.ajax({
+            url: `/categories/${editSelectedCategoryId}`,
+            type: 'put',
+            data: {name: $("#nameCatEdit").val()},
+            headers: {
+              authorization: `Bearer ${localStorage.getItem('token')}` 
+            },
+            dataType: 'json',
+            success:( data ) => {
+              editCategoryInTable(editSelectedCategoryId, $("#nameCatEdit").val())
+              sendPrimaryMessage('The category has been updated.')
+              $('#modaledit').modal('toggle')
+            },
+            error: ( err ) => {
+              sendDangerMessage(err.responseJSON.message)
+              $('#modaledit').modal('toggle')
+            }
+          })
+        }
+        else{
+          sendDangerMessage('The category cannot be empty!');
+          $('#modaledit').modal('toggle')
+        }
+      }
+
+      const appendAddedCategoryInTable = (category) => {
+        const rowsQtt = $('#tbody').children().length
+        const child = `<tr nid="${category.data.id}">
+              <th scope="row">${rowsQtt + 1}</th>
+              <td>${category.data.name}</td>
+              <td><button type="button" class="btn btn-secondary mr-2" onclick="editModalcategory( ${category.data.id} )" >Edit</button><button type="button" class="btn btn-warning" onclick="deletecategory( ${category.data.id} )">Delete</button></td>
+            </tr>`
+        $('#tbody').append(child)
+      }
+
+      const deleteCategoryInTableFromId = id => {
+        for (const [key, value] of Object.entries($('#tbody').children())) {
+          if(value.attributes)
+            if(value.attributes[0].value == id){
+              $('#tbody').children()[key].remove()
+            }
+        }
+      }
+
+      const editCategoryInTable = (id, name) => {
+        for (const [key, value] of Object.entries($('#tbody').children())) {
+          if(value.attributes)
+            if(value.attributes[0].value == id){
+              $('#tbody').children()[key].children[1].innerHTML = name
+            }
+        }
+      }
+
     </script>
   </body>
 </html>
