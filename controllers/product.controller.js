@@ -1,5 +1,6 @@
 const ProductModel = require('../db/product.model.js')
-const path= require("path");
+const fs = require('fs')
+const imgPath= './public/img';
 
 module.exports = {
     async create(req, res){
@@ -103,7 +104,18 @@ module.exports = {
                   message: "Could not delete Product with id " + req.params.productId
                 });
               }
-            } else res.send({ message: `Product was deleted successfully!` });
+            } else {
+              //deleting img
+              try{
+                const path = `${imgPath}/${req.params.productId}.jpg`
+                fs.unlinkSync(path)
+                res.send({ message: `Product was deleted successfully!` });
+              }catch(error){
+                res.status(500).send({
+                  message: "Could not delete Product img with id " + req.params.productId
+                });
+              }
+            }
           }
         );
     },

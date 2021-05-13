@@ -124,7 +124,7 @@ module.exports = {
     async findByToken(req, res){
         try{
             const token = req.params.token
-            console.log({token})
+            //console.log({token})
             if(!token){
                 res.status(401).send({
                     message:  "Authentication failed."

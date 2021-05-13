@@ -63,7 +63,12 @@ module.exports = {
                 res.status(404).send({
                   message: `Not found Category with id ${req.params.categoryId}.`
                 });
+              } else if (err.kind === "row_referenced") {
+                res.status(404).send({
+                  message: `Cannot delete this category because it has products. You must empty it first.`
+                });
               } else {
+                console.log(err)
                 res.status(500).send({
                   message: "Could not delete Category with id " + req.params.categoryId
                 });

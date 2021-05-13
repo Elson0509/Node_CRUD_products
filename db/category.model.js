@@ -48,7 +48,11 @@ Category.findById = (categoryId, result) => {
 Category.remove = (id, result) => {
     sql.query("DELETE FROM categories WHERE id = ?", id, (err, res) => {
       if (err) {
-        //console.log("error: ", err);
+        if(err.code == 'ER_ROW_IS_REFERENCED_2'){
+          result({ kind: "row_referenced" }, null);
+          return;
+        }
+        //console.log("error: ", err.code);
         result(err, null);
         return;
       }

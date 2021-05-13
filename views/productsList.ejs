@@ -14,11 +14,11 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Categories <span class="sr-only">(current)</span></a>
-          </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Products</a>
+            <a class="nav-link" href="/categories">Categories </a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Products <span class="sr-only">(current)</span></a>
           </li>
         </ul>
         <form class="form-inline my-2 my-lg-0" id="userStatus">
@@ -54,8 +54,14 @@
             </div>
           </div>
         <% })%> 
-
-          <button type="button" class="btn btn-success mt-4" onclick="addModalproduct()">Add new Product</button>
+        <div class="row">
+          <div class="col-12">
+            <button type="button" class="btn btn-success mt-4" onclick="addModalproduct()">Add new Product</button>
+          </div>
+          <div class="col-12">
+            <button type="button" class="btn btn-info mt-4" onclick="back()">Back</button>
+          </div>
+        </div>
           <div class="alert alert-danger my-2" role="alert" id="danger-alert"></div>
           <div class="alert alert-primary my-2" role="alert" id="primary-alert"></div>
     </div>
@@ -305,6 +311,9 @@
         }
       }
 
+      const back = _ => {
+        window.history.back()
+      }
     </script>
   </body>
 </html>
