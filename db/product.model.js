@@ -13,11 +13,11 @@ Product.create = (newProduct, result) => {
     sql.query("INSERT INTO products SET ? ", newProduct, (err, res) => {
         //console.log(newProduct)
         if(err){
-            console.log("error: ", err)
+            //console.log("error: ", err)
             result(err, null);
             return
         }
-        console.log('product created: ', {...newProduct, id: res.insertId})
+        //console.log('product created: ', {...newProduct, id: res.insertId})
         result(null, {...newProduct, id: res.insertId});
     })
 }
@@ -25,7 +25,7 @@ Product.create = (newProduct, result) => {
 Product.getAll = result => {
     sql.query("SELECT * FROM products", (err, res) => {
         if(err){
-            console.log("error: ", err)
+            console.log('Product.getAll', "error: ", err)
             result(err, null);
             return
         }
@@ -36,7 +36,7 @@ Product.getAll = result => {
 Product.findById = (productId, result) => {
     sql.query(`SELECT p.id as id, category_id, p.name as name, description, img, price, c.name as category_name FROM products p INNER JOIN categories c on p.category_id = c.id WHERE p.id = ?`, productId, (err, res) => {
       if (err) {
-        console.log("error: ", err);
+        console.log('Product.findById', "error: ", err);
         result(err, null);
         return;
       }
@@ -55,7 +55,7 @@ Product.findById = (productId, result) => {
 Product.remove = (id, result) => {
     sql.query("DELETE FROM products WHERE id = ?", id, (err, res) => {
       if (err) {
-        console.log("error: ", err);
+        console.log('Product.remove', "error: ", err);
         result(err, null);
         return;
       }
@@ -66,7 +66,7 @@ Product.remove = (id, result) => {
         return;
       }
   
-      console.log("deleted product with id: ", id);
+      console.log('Product.remove', "deleted product with id: ", id);
       result(null, res);
     });
 };
@@ -77,7 +77,7 @@ Product.updateById = (id, product, result) => {
       [product.name, product.img, product.price, product.category_id, product.description, id],
       (err, res) => {
         if (err) {
-          console.log("error: ", err);
+          console.log('Product.updateById', "error: ", err);
           result(err, null);
           return;
         }
@@ -88,8 +88,31 @@ Product.updateById = (id, product, result) => {
           return;
         }
   
-        console.log("updated product: ", { ...product, id: id });
+        console.log('Product.updateById', "updated product: ", { ...product, id: id });
         result(null, {...product, id: id });
+      }
+    );
+};
+
+Product.updateImgById = (id, result) => {
+    sql.query(
+      "UPDATE products SET img = ? WHERE id = ?",
+      [`${id}.jpg`, id],
+      (err, res) => {
+        if (err) {
+          console.log('Product.updateById', "error: ", err);
+          result(err, null);
+          return;
+        }
+  
+        if (res.affectedRows == 0) {
+          // not found Customer with the id
+          result({ kind: "not_found" }, null);
+          return;
+        }
+  
+        console.log('Product.updateById', "updated product: ", { id: id });
+        result(null, { id: id });
       }
     );
 };

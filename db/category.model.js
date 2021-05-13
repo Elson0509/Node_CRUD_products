@@ -7,13 +7,12 @@ const Category = function(category) {
 
 Category.create = (newCategory, result) => {
     sql.query("INSERT INTO categories SET ? ", newCategory, (err, res) => {
-        //console.log(newCategory)
         if(err){
             console.log("error: ", err)
             result(err, null);
             return
         }
-        console.log('category created: ', {...newCategory, id: res.insertId })
+        //console.log('category created: ', {...newCategory, id: res.insertId })
         result(null, {...newCategory, id: res.insertId });
     })
 }
@@ -21,7 +20,7 @@ Category.create = (newCategory, result) => {
 Category.getAll = result => {
     sql.query("SELECT * FROM categories", (err, res) => {
         if(err){
-            console.log("error: ", err)
+            console.log('Category.getAll', "error: ", err)
             result(err, null);
             return
         }
@@ -30,28 +29,26 @@ Category.getAll = result => {
 }
 
 Category.findById = (categoryId, result) => {
-    sql.query(`SELECT * FROM categories WHERE id = ?`, categoryId, (err, res) => {
+  //console.log(categoryId)
+    sql.query(`SELECT p.id as id, category_id, p.name as name, description, img, price, c.name as category_name FROM products p INNER JOIN categories c on p.category_id = c.id WHERE c.id = ?`, categoryId, (err, res) => {
+    //sql.query(`SELECT * FROM categories WHERE id = ?`, categoryId, (err, res) => {
       if (err) {
-        console.log("error: ", err);
+        //console.log('Category.findById', "error: ", err);
         result(err, null);
         return;
       }
-  
-      if (res.length) {
-        console.log("found category: ", res[0]);
-        result(null, res[0]);
+      else {
+        //console.log('Category.findById', "found category: ", res);
+        result(null, res);
         return;
       }
-  
-      // not found category with the id
-      result({ kind: "not_found" }, null);
     });
 };
 
 Category.remove = (id, result) => {
     sql.query("DELETE FROM categories WHERE id = ?", id, (err, res) => {
       if (err) {
-        console.log("error: ", err);
+        //console.log("error: ", err);
         result(err, null);
         return;
       }
@@ -62,7 +59,7 @@ Category.remove = (id, result) => {
         return;
       }
   
-      console.log("deleted category with id: ", id);
+      //console.log("deleted category with id: ", id);
       result(null, res);
     });
 };
@@ -73,7 +70,7 @@ Category.updateById = (id, category, result) => {
       [category.name, id],
       (err, res) => {
         if (err) {
-          console.log("error: ", err);
+          //console.log("error: ", err);
           result(err, null);
           return;
         }
@@ -84,7 +81,7 @@ Category.updateById = (id, category, result) => {
           return;
         }
   
-        console.log("updated category: ", { ...category, id: id });
+        //console.log("updated category: ", { ...category, id: id });
         result(null, { ...category, id: id });
       }
     );

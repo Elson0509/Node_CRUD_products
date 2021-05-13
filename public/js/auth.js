@@ -5,7 +5,7 @@ const auth = () => {
             return
         }
         else{
-            $.get(`users/${token}`, (data) => {
+            $.get(`/users/${token}`, (data) => {
                 setUserStatus(data)
                 return data
             })

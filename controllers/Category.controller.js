@@ -9,7 +9,6 @@ module.exports = {
             })
         }
 
-        console.log(req.body)
         //create a category
         const newCategory = new CategoryModel({
             name: req.body.name
@@ -29,15 +28,13 @@ module.exports = {
     },
 
     async findAll(req, res){
-      console.log('req-userdata findAll categories')
-      console.log(req.userData)
         CategoryModel.getAll((err, data) => {
             if(err)
                 res.status(500).send({
                     message: err.message || "Some error occurred while retrieving categories."
                 })
             else{
-                res.render('categoriesList', {data: data, userData: req.userData})
+                res.render('categoriesList', {data: data})
             }
         })
     },
@@ -54,7 +51,7 @@ module.exports = {
                     message: "Error retrieving category with id " + req.params.customerId
                   });
                 }
-              } else res.send(data);
+              } else res.render('productsList', {data: data, categoryId:req.params.categoryId })
             }
         );
     },

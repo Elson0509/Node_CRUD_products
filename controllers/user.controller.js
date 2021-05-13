@@ -69,8 +69,6 @@ module.exports = {
             return
         }
 
-        console.log(req.body)
-
         const user = new UserModel({
             username: req.body.username,
             password: req.body.password

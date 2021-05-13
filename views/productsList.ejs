@@ -8,7 +8,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-    <title>Categories</title>
+    <title>Products</title>
   </head>
   <body onload="loadHandler()">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -29,37 +29,42 @@
     </nav>
     <div class="container-fluid">
       <div class="row">
-        <div class="col">
-          <h1>List of categories</h1>
-          <table class="table table-hover">
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Name</th>
-                <th scope="col">Action</th>
-              </tr>
-            </thead>
-            <tbody id="tbody">
-              <% data.forEach((el, ind) => { %>
-                <tr nid="<%= el.id %>">
-                  <th scope="row"><%= (ind+1) %></th>
-                  <td><a href="<%= `/categories/${el.id}` %>"><%= el.name %></a></td>
-                  <td><button type="button" class="btn btn-secondary mr-2" onclick="editModalcategory(<%= el.id %>)">Edit</button><button type="button" class="btn btn-warning" onclick="deletecategory(<%= `${el.id}, ${ind}` %>)">Delete</button></td>
-                </tr>
-              <% })%> 
-            </tbody>
-          </table>
-          <button type="button" class="btn btn-success" onclick="addModalcategory()">Add new Category</button>
-          <div class="alert alert-danger my-2" role="alert" id="danger-alert"></div>
-          <div class="alert alert-primary my-2" role="alert" id="primary-alert"></div>
+        <div class="col-12">
+          <% if(data.length > 0) { %>
+            <h1>List of products - <%= data[0].category_name %></h1>
+          <% } else { %>
+            <h1>There are not products for this category.</h1>
+          <% } %>
         </div>
       </div>
+      
+        <% data.forEach((el, ind) => { %>
+          <div class="row border">
+            <div class="col-3 p-2">
+              <img src="/img/<%= el.img %>" class="img-fluid"/>
+            </div>
+            <div class="col-7 p-2">
+              <h2 class="h2"><%= el.name %></h2>
+              <h4 class="h4"><%= el.description %></h4>
+              <h3 class="font-weight-light h3">$<%= el.price/100 %></h3>
+            </div>
+            <div class="col-2 p-4">
+              <button type="button" class="btn btn-secondary m-2" onclick="editModalproduct(<%= el.id %>)">Edit</button>
+              <button type="button" class="btn btn-warning m-2" onclick="deleteproduct(<%= el.id %>)">Delete</button>
+            </div>
+          </div>
+        <% })%> 
+
+          <button type="button" class="btn btn-success mt-4" onclick="addModalproduct()">Add new Product</button>
+          <div class="alert alert-danger my-2" role="alert" id="danger-alert"></div>
+          <div class="alert alert-primary my-2" role="alert" id="primary-alert"></div>
     </div>
+
     <div class="modal fade" id="modaladd" tabindex="-1" role="dialog" aria-labelledby="modaladdLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="modaladdLabel">Adding Category</h5>
+            <h5 class="modal-title" id="modaladdLabel">Adding Product</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -68,13 +73,26 @@
             <form>
               <div class="form-group">
                 <label for="name">Name:</label>
-                <input type="text" class="form-control" id="nameCat" aria-describedby="name" placeholder="Enter category name">
+                <input type="text" class="form-control" id="nameCat" aria-describedby="name" placeholder="Enter product name"/>
+              </div>
+              <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea class="form-control" id="descriptionCat" aria-describedby="description" placeholder="Enter product description" rows="3"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="image">Image:</label>
+                <input type="file" class="form-control" accept=".jpg,.jpeg" name="imageCat" id="imageCat" aria-describedby="image" />
+                <small>Only .jpg images are accepted</small>
+              </div>
+              <div class="form-group">
+                <label for="price">Price:</label>
+                <input type="number" step="0.01" min="0" class="form-control" id="priceCat" aria-describedby="price"/>
               </div>
             </form>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-success" onclick="addCategory()">Add</button>
+            <button type="button" class="btn btn-success" onclick="addProduct(<%= categoryId %>)">Add</button>
           </div>
         </div>
       </div>
@@ -139,7 +157,7 @@
           console.log('editing ' + id)
         }
       }
-      const deletecategory = (id, indexTable) => {
+      const deleteproduct = (id, indexTable) => {
         if(!token){
           sendDangerMessage('You are not allowed to make changes. You need to log in.')
         }
@@ -148,16 +166,15 @@
           $('#danger-alert').hide()
           $('#primary-alert').hide()
           $.ajax({
-            url: `/categories/${id}`,
+            url: `/products/${id}`,
             type: 'delete',
             headers: {
               authorization: `Bearer ${localStorage.getItem('token')}` 
             },
             dataType: 'json',
             success:( data ) => {
-              deleteCategoryInTableFromId(id)
-              sendPrimaryMessage('The category has been removed')
-              
+              alert('The product has been removed.')
+              location.reload()
             },
             error: ( err ) => {
               sendDangerMessage(err.responseJSON.message)
@@ -166,7 +183,7 @@
           })
         }
       }
-      const addModalcategory = () => {
+      const addModalproduct = () => {
         if(!token){
           sendDangerMessage('You are not allowed to make changes. You need to log in.')
         }
@@ -175,7 +192,7 @@
         }
       } 
 
-      const editModalcategory = (id) => {
+      const editModalproduct = (id) => {
         editSelectedCategoryId = id
         if(!token){
           sendDangerMessage('You are not allowed to make changes. You need to log in.')
@@ -185,22 +202,67 @@
         }
       } 
 
-      const addCategory = () => {
-        if($("#nameCat").val()){
+      const addProduct = (catId) => {
+        if($("#nameCat").val() && $("#descriptionCat").val() && $("#priceCat").val() && $("#imageCat").val()){
           $('#danger-alert').hide()
           $('#primary-alert').hide()
+          //handling file upload
+          const files = $('#imageCat').get(0).files
+          
+          
+          if(files.length === 0){
+            sendDangerMessage('You must send at least 1 file to upload.');
+            return
+          }
+          if(files.length > 1){
+            sendDangerMessage('You can only upload 1 file.');
+            return
+          }
+
+          //appending to the formdata
+          //const formData = new FormData($('#imageCat')[0])
+          const formData = new FormData()
+          formData.append('imageCat', files[0])
+          console.log(files[0])
+          console.log(formData)
+
           $.ajax({
-            url: '/categories',
+            url: '/products',
             type: 'post',
-            data: {name: $("#nameCat").val()},
+            data: {
+              name: $("#nameCat").val(),
+              category_id: catId,
+              description: $("#descriptionCat").val(),
+              //img: '01.jpg',
+              price: $("#priceCat").val(),
+            }, 
             headers: {
               authorization: `Bearer ${localStorage.getItem('token')}` 
             },
             dataType: 'json',
             success:( data ) => {
-              appendAddedCategoryInTable(data)
-              sendPrimaryMessage('The category has been created')
-              $('#modaladd').modal('toggle')
+              $.ajax({
+                url: `/products/image/${data.data.id}`,
+                type: 'post',
+                data: formData,
+                "content-type": "application/x-www-form-urlencoded",
+                processData: false,
+                contentType: false,
+                cache: false,
+                headers: {
+                  authorization: `Bearer ${localStorage.getItem('token')}` 
+                },
+                success:( data2 ) => {
+                  console.log(data2)
+                  alert('The product has been added.')
+                  location.reload()
+                },
+                error: ( err ) => {
+                  console.log({err})
+                  sendDangerMessage(err)
+                  $('#modaladd').modal('toggle')
+                }
+              })
             },
             error: ( err ) => {
               sendDangerMessage(err.responseJSON.message)
@@ -209,7 +271,7 @@
           })
         }
         else{
-          sendDangerMessage('The category cannot be empty!');
+          sendDangerMessage('The product data cannot be empty!');
           $('#modaladd').modal('toggle')
         }
       }
@@ -240,34 +302,6 @@
         else{
           sendDangerMessage('The category cannot be empty!');
           $('#modaledit').modal('toggle')
-        }
-      }
-
-      const appendAddedCategoryInTable = (category) => {
-        const rowsQtt = $('#tbody').children().length
-        const child = `<tr nid="${category.data.id}">
-              <th scope="row">${rowsQtt + 1}</th>
-              <td><a href="/categories/${category.data.id}">${category.data.name}</a></td>
-              <td><button type="button" class="btn btn-secondary mr-2" onclick="editModalcategory( ${category.data.id} )" >Edit</button><button type="button" class="btn btn-warning" onclick="deletecategory( ${category.data.id} )">Delete</button></td>
-            </tr>`
-        $('#tbody').append(child)
-      }
-
-      const deleteCategoryInTableFromId = id => {
-        for (const [key, value] of Object.entries($('#tbody').children())) {
-          if(value.attributes)
-            if(value.attributes[0].value == id){
-              $('#tbody').children()[key].remove()
-            }
-        }
-      }
-
-      const editCategoryInTable = (id, name) => {
-        for (const [key, value] of Object.entries($('#tbody').children())) {
-          if(value.attributes)
-            if(value.attributes[0].value == id){
-              $('#tbody').children()[key].children[1].innerHTML = name
-            }
         }
       }
 
