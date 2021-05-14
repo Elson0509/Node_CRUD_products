@@ -6,7 +6,7 @@ const Product = function(product) {
     this.description = product.description
     this.img = product.img
     this.name = product.name
-    this.price = product.price
+    this.price = product.price * 100
 }
 
 Product.create = (newProduct, result) => {
