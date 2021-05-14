@@ -4,8 +4,6 @@ const fileUpload = require('../middleware/file-upload')
 const router = express.Router()
 
 
-router.get('/', productController.findAll)
-
 router.get("/:productId", productController.find)
 
 router.delete("/:productId", productController.remove)

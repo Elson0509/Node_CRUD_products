@@ -23,7 +23,7 @@ Product.create = (newProduct, result) => {
 }
 
 Product.getAll = result => {
-    sql.query("SELECT * FROM products", (err, res) => {
+    sql.query("SELECT p.id as id, category_id, p.name as name, description, img, price, c.name as category_name FROM products p INNER JOIN categories c on p.category_id = c.id", (err, res) => {
         if(err){
             console.log('Product.getAll', "error: ", err)
             result(err, null);

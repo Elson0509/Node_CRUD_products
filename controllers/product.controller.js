@@ -1,4 +1,5 @@
 const ProductModel = require('../db/product.model.js')
+const CategoryModel = require('../db/category.model.js')
 const fs = require('fs')
 const imgPath= './public/img';
 
@@ -70,7 +71,16 @@ module.exports = {
                     message: err.message || "Some error occurred while retrieving products."
                 })
             else{
-                res.render('index', {data: data})
+              //getting all categories
+              CategoryModel.getAll((errCat, dataCat) => {
+                if(errCat)
+                    res.status(500).send({
+                        message: errCat.message || "Some error occurred while retrieving categories."
+                    })
+                else{
+                    res.render('allproducts', {data: data, categories: dataCat})
+                }
+              })
             }
         })
     },

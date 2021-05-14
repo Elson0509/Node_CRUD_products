@@ -31,9 +31,9 @@
       <div class="row">
         <div class="col-12">
           <% if(data.length > 0) { %>
-            <h1>List of products - <%= data[0].category_name %></h1>
+            <h1>List of all products</h1>
           <% } else { %>
-            <h1>There are not products for this category.</h1>
+            <h1>There are not products registered.</h1>
           <% } %>
         </div>
       </div>
@@ -45,11 +45,12 @@
             </div>
             <div class="col-7 p-2">
               <h2 class="h2"><%= el.name %></h2>
-              <h4 class="h4"><%= el.description %></h4>
+              <h4 class="h4">Category: <a href="/categories/<%= el.category_id %>"><%= el.category_name %></a></h4>
+              <h5 class="h5"><%= el.description %></h5>
               <h3 class="font-weight-light h3">$<%= el.price/100 %></h3>
             </div>
             <div class="col-2 p-4">
-              <button type="button" class="btn btn-secondary m-2" onclick="editModalproduct(<%= `${el.id}, '${el.name}', '${el.description}', ${el.price}` %>)">Edit</button>
+              <button type="button" class="btn btn-secondary m-2" onclick="editModalproduct(<%= `${el.id}, '${el.name}', '${el.description}', ${el.price}, ${el.category_id}` %>)">Edit</button>
               <button type="button" class="btn btn-warning m-2" onclick="deleteproduct(<%= el.id %>)">Delete</button>
             </div>
           </div>
@@ -82,6 +83,14 @@
                 <input type="text" class="form-control" id="nameCat" aria-describedby="name" placeholder="Enter product name"/>
               </div>
               <div class="form-group">
+                <label for="category">Category</label>
+                <select class="form-control" id="categoryCat">
+                  <% categories.forEach((el, ind) => { %>
+                    <option value="<%= el.id %>"><%= el.name %></option>
+                  <% })%> 
+                </select>
+              </div>
+              <div class="form-group">
                 <label for="description">Description:</label>
                 <textarea class="form-control" id="descriptionCat" aria-describedby="description" placeholder="Enter product description" rows="3"></textarea>
               </div>
@@ -98,12 +107,12 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-success" onclick="addProduct(<%= categoryId %>)">Add</button>
+            <button type="button" class="btn btn-success" onclick="addProduct()">Add</button>
           </div>
         </div>
       </div>
     </div>
-
+    
     <div class="modal fade" id="modaledit" tabindex="-1" role="dialog" aria-labelledby="modaladdLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -118,6 +127,14 @@
               <div class="form-group">
                 <label for="name">Name:</label>
                 <input type="text" class="form-control" id="nameCatEdit" aria-describedby="name" placeholder="Enter product name"/>
+              </div>
+              <div class="form-group">
+                <label for="category">Category</label>
+                <select class="form-control" id="categoryCatEdit">
+                  <% categories.forEach((el, ind) => { %>
+                    <option value="<%= el.id %>"><%= el.name %></option>
+                  <% })%> 
+                </select>
               </div>
               <div class="form-group">
                 <label for="description">Description:</label>
@@ -136,7 +153,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-success" onclick="editProduct(<%= categoryId %>)">Edit</button>
+            <button type="button" class="btn btn-success" onclick="editProduct()">Edit</button>
           </div>
         </div>
       </div>
@@ -178,7 +195,7 @@
         }
       }
       
-      const deleteproduct = (id, indexTable) => {
+      const deleteproduct = (id) => {
         if(!token){
           sendDangerMessage('You are not allowed to make changes. You need to log in.')
         }
@@ -214,10 +231,11 @@
         }
       } 
 
-      const editModalproduct = (id, name, description, price) => {
+      const editModalproduct = (id, name, description, price, category_id) => {
         $('#nameCatEdit').val(name)
         $('#descriptionCatEdit').val(description)
         $('#priceCatEdit').val(price/100)
+        $('#categoryCatEdit').val(category_id)
         editSelectedProductId = id
         if(!token){
           sendDangerMessage('You are not allowed to make changes. You need to log in.')
@@ -234,7 +252,6 @@
           //handling file upload
           const files = $('#imageCat').get(0).files
           
-          
           if(files.length === 0){
             sendDangerMessage('You must send at least 1 file to upload.');
             return
@@ -245,7 +262,6 @@
           }
 
           //appending to the formdata
-          //const formData = new FormData($('#imageCat')[0])
           const formData = new FormData()
           formData.append('imageCat', files[0])
 
@@ -254,9 +270,8 @@
             type: 'post',
             data: {
               name: $("#nameCat").val(),
-              category_id: catId,
+              category_id: $("#categoryCat").val(),
               description: $("#descriptionCat").val(),
-              //img: '01.jpg',
               price: $("#priceCat").val(),
             }, 
             headers: {
@@ -327,7 +342,7 @@
             type: 'put',
             data: {
               name: $("#nameCatEdit").val(),
-              category_id: catId,
+              category_id: $('#categoryCatEdit').val(),
               description: $("#descriptionCatEdit").val(),
               img: `${editSelectedProductId}.jpg`,
               price: $("#priceCatEdit").val()
