@@ -14,6 +14,8 @@ router.get('/categories', categoryController.findAll)
 router.get("/categories/:categoryId", categoryController.find)
 
 router.get('/login', (req, res)=> {res.render('login')})
+
+router.get('/signup', (req, res)=> {res.render('signup')})
  
 
 module.exports = router
