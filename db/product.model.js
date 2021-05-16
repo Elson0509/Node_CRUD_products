@@ -11,13 +11,10 @@ const Product = function(product) {
 
 Product.create = (newProduct, result) => {
     sql.query("INSERT INTO products SET ? ", newProduct, (err, res) => {
-        //console.log(newProduct)
         if(err){
-            //console.log("error: ", err)
             result(err, null);
             return
         }
-        //console.log('product created: ', {...newProduct, id: res.insertId})
         result(null, {...newProduct, id: res.insertId});
     })
 }
@@ -25,7 +22,6 @@ Product.create = (newProduct, result) => {
 Product.getAll = result => {
     sql.query("SELECT p.id as id, category_id, p.name as name, description, img, price, c.name as category_name FROM products p INNER JOIN categories c on p.category_id = c.id", (err, res) => {
         if(err){
-            console.log('Product.getAll', "error: ", err)
             result(err, null);
             return
         }
@@ -36,13 +32,11 @@ Product.getAll = result => {
 Product.findById = (productId, result) => {
     sql.query(`SELECT p.id as id, category_id, p.name as name, description, img, price, c.name as category_name FROM products p INNER JOIN categories c on p.category_id = c.id WHERE p.id = ?`, productId, (err, res) => {
       if (err) {
-        console.log('Product.findById', "error: ", err);
         result(err, null);
         return;
       }
   
       if (res.length) {
-        console.log("found product: ", res[0]);
         result(null, res[0]);
         return;
       }
@@ -55,7 +49,6 @@ Product.findById = (productId, result) => {
 Product.remove = (id, result) => {
     sql.query("DELETE FROM products WHERE id = ?", id, (err, res) => {
       if (err) {
-        console.log('Product.remove', "error: ", err);
         result(err, null);
         return;
       }
@@ -66,7 +59,6 @@ Product.remove = (id, result) => {
         return;
       }
   
-      console.log('Product.remove', "deleted product with id: ", id);
       result(null, res);
     });
 };
@@ -77,7 +69,6 @@ Product.updateById = (id, product, result) => {
       [product.name, product.img, product.price, product.category_id, product.description, id],
       (err, res) => {
         if (err) {
-          console.log('Product.updateById', "error: ", err);
           result(err, null);
           return;
         }
@@ -88,7 +79,6 @@ Product.updateById = (id, product, result) => {
           return;
         }
   
-        console.log('Product.updateById', "updated product: ", { ...product, id: id });
         result(null, {...product, id: id });
       }
     );
@@ -100,7 +90,6 @@ Product.updateImgById = (id, result) => {
       [`${id}.jpg`, id],
       (err, res) => {
         if (err) {
-          console.log('Product.updateById', "error: ", err);
           result(err, null);
           return;
         }
@@ -111,7 +100,6 @@ Product.updateImgById = (id, result) => {
           return;
         }
   
-        console.log('Product.updateById', "updated product: ", { id: id });
         result(null, { id: id });
       }
     );

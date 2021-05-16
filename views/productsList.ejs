@@ -46,7 +46,7 @@
             <div class="col-7 p-2">
               <h2 class="h2"><%= el.name %></h2>
               <h4 class="h4"><%= el.description %></h4>
-              <h3 class="font-weight-light h3">$<%= el.price/100 %></h3>
+              <h3 class="font-weight-light h3">$<%= (el.price/100).toFixed(2) %></h3>
             </div>
             <div class="col-2 p-4">
               <button type="button" class="btn btn-secondary m-2" onclick="editModalproduct(<%= `${el.id}, '${el.name}', '${el.description}', ${el.price}` %>)">Edit</button>
@@ -173,9 +173,6 @@
         if(!token){
           sendDangerMessage('You are not allowed to make changes. You need to log in.')
         }
-        else{
-          console.log('editing ' + id)
-        }
       }
       
       const deleteproduct = (id, indexTable) => {
@@ -183,7 +180,6 @@
           sendDangerMessage('You are not allowed to make changes. You need to log in.')
         }
         else{
-          console.log('deleting ' + id)
           $('#danger-alert').hide()
           $('#primary-alert').hide()
           $.ajax({
@@ -276,12 +272,10 @@
                   authorization: `Bearer ${localStorage.getItem('token')}` 
                 },
                 success:( data2 ) => {
-                  console.log(data2)
                   alert('The product has been added.')
                   location.reload()
                 },
                 error: ( err ) => {
-                  console.log({err})
                   sendDangerMessage(err)
                   $('#modaladd').modal('toggle')
                 }
@@ -349,12 +343,10 @@
                   authorization: `Bearer ${localStorage.getItem('token')}` 
                 },
                 success:( data2 ) => {
-                  console.log(data2)
                   alert('The product has been edited.')
                   location.reload()
                 },
                 error: ( err ) => {
-                  console.log({err})
                   sendDangerMessage(err)
                   $('#modaladd').modal('toggle')
                 }

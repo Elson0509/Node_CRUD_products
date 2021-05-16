@@ -34,8 +34,6 @@ module.exports = {
     },
 
     async saveImg(req, res){
-      console.log('saveimg', req.params)
-
       // Validate Request
       if (!req.body) {
         res.status(400).send({

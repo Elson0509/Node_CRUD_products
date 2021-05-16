@@ -68,7 +68,6 @@ module.exports = {
                   message: `Cannot delete this category because it has products. You must empty it first.`
                 });
               } else {
-                console.log(err)
                 res.status(500).send({
                   message: "Could not delete Category with id " + req.params.categoryId
                 });
