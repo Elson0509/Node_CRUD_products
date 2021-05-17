@@ -24,6 +24,4 @@ Some additional libraries are listed below:
 **Mysql** was chosen to store data. A SQL script to the tables can be seen in /db/script.sql.
 
 ## Presentation
-<video width="400" controls>
-  <source src="video/presentation.mp4" type="video/mp4">
-</video>
+[![Node CRUD products presentation](http://img.youtube.com/vi/6IB4-1hn7qk/0.jpg)](http://www.youtube.com/watch?v=6IB4-1hn7qk "")
